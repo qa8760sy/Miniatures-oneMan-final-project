@@ -1,0 +1,102 @@
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class App {
+    public static final int MAIN = 0;
+    public static final int STARWARS = 1;
+    public static final int WARHAMMER = 2;
+
+    private MainGui mainGui;
+    private StarWarsGui starwarsGui;
+    private WarhammerGui warhammerGui;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+
+    private static void createAndShowGUI() {
+        // Create and set up the window.
+        JFrame frame = new JFrame("Miniature");
+        frame.setBounds(100, 100, 829, 502);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(new CardLayout());
+
+        // Create and set up the content pane.
+        App demo = new App();
+        demo.addComponentToPane(frame.getContentPane());
+
+        // Display the window.
+        frame.setVisible(true);
+    }
+
+    private void addComponentToPane(Container pane) {
+        mainGui = new MainGui();
+        starwarsGui = new StarWarsGui();
+        warhammerGui = new WarhammerGui();
+
+        mainGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                String selected = mainGui.getGameType();
+                switch (selected) {
+                    case "Star Wars":
+                        starwarsGui.setTeamName(mainGui.getTeamName());
+                        showPanel(STARWARS);
+                        break;
+                    case "Warhammer":
+                        warhammerGui.setTeamName(mainGui.getTeamName());
+                        showPanel(WARHAMMER);
+                        break;
+                }
+            }
+        });
+
+        starwarsGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                if (starwarsGui.saveData() == false) {
+                } else {
+                    showPanel(MAIN);
+                }
+            }
+        });
+
+        warhammerGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+               if (warhammerGui.saveData() == false) {
+               } else {
+            	showPanel(MAIN);
+               }
+            }
+        });
+
+        pane.add(mainGui);
+        pane.add(starwarsGui);
+        pane.add(warhammerGui);
+    }
+
+    public void showPanel(int panel) {
+        mainGui.setVisible(false);
+        starwarsGui.setVisible(false);
+        warhammerGui.setVisible(false);
+
+        switch (panel) {
+            case MAIN:
+                mainGui.setVisible(true);
+                break;
+            case STARWARS:
+                starwarsGui.setVisible(true);
+                break;
+            case WARHAMMER:
+                warhammerGui.setVisible(true);
+                break;
+
+        }
+    }
+
+}

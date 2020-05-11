@@ -1,0 +1,87 @@
+/*star wars miniature template
+ * To do:
+ * better toString
+ * 
+ * */
+
+public class StarWars extends Miniature {
+	private int hP, def, atk, dmg, force;
+	private String abilities, forceAbilities, commanderEffect;
+
+	public StarWars(String name, int pointCost, int hP, int def, int atk, int dmg, String abilities,
+			String forceAbilities, String commanderEffect) {
+		super(name, pointCost);
+		this.hP = hP;
+		this.def = def;
+		this.atk = atk;
+		this.dmg = dmg;
+
+		this.abilities = abilities;
+		this.forceAbilities = forceAbilities;
+		this.commanderEffect = commanderEffect;
+	}
+
+	public void sethP(int hP) {
+		this.hP = hP;
+	}
+
+	public int gethP() {
+		return hP;
+	}
+
+	public void setDef(int def) {
+		this.def = def;
+	}
+
+	public int getDef() {
+		return def;
+	}
+
+	public void setAtk(int atk) {
+		this.atk = atk;
+	}
+
+	public int getAtk() {
+		return atk;
+	}
+
+	public void setDmg(int dmg) {
+		this.dmg = dmg;
+	}
+
+	public int getDmg() {
+		return dmg;
+	}
+
+	public void setForce(int force) {
+		this.force = force;
+	}
+
+	public int getForce() {
+		return force;
+	}
+
+	public void setAbilities(String abilities) {
+		this.abilities = abilities;
+	}
+
+	public String getAbilities() {
+		return abilities;
+	}
+
+	public void setCommanderEffect(String commanderEffect) {
+		this.commanderEffect = commanderEffect;
+	}
+
+	public String getCommanderrEffect() {
+		return commanderEffect;
+	}
+
+	@Override
+	public String toString() {
+		return "Model: " + getName() + "\n" + "Point Cost: " + getPointCost() + "\n" + "Hit Points: " + hP + "\n"
+				+ "Defense: " + def + "\n" + "Attack:" + atk + "\n" + "Damage:" + dmg + "\n" + "Special Abilities: "
+				+ abilities + "\n" + "Force Powers: " + forceAbilities + "\n" + "Commander Effects: " + commanderEffect
+				+ "\n";
+	}
+}

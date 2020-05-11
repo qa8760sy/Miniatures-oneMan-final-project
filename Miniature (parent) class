@@ -1,0 +1,28 @@
+public class Miniature {
+
+	private String name;
+	private int pointCost;
+
+	public Miniature(String name, int pointCost) {
+		this.name = name;
+		this.pointCost = pointCost;
+
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setPointCost(int pointCost) {
+		this.pointCost = pointCost;
+	}
+
+	public int getPointCost() {
+		return pointCost;
+	}
+
+}

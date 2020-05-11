@@ -7,5 +7,8 @@ untested but im sure warhammer age of sigmar, night vault, bloodbowl as well ass
 to name your team and file that it will be saved as simply enter what you'd like in the team name field once the application opens
 FIle will save in current running directory
 
+There is a known issue, the arrayList needs to be wiped after each save, I just haven't implimented it yet. Its an easy fix but i can't 
+do it this minute
+
 There will not be any future updates, you dont have my permission to modify the code.
 There is no support for the application

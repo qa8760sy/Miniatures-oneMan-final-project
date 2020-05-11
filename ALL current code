@@ -1,0 +1,941 @@
+
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class App {
+    public static final int MAIN = 0;
+    public static final int STARWARS = 1;
+    public static final int WARHAMMER = 2;
+
+    private MainGui mainGui;
+    private StarWarsGui starwarsGui;
+    private WarhammerGui warhammerGui;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                createAndShowGUI();
+            }
+        });
+    }
+
+    private static void createAndShowGUI() {
+        // Create and set up the window.
+        JFrame frame = new JFrame("Miniature");
+        frame.setBounds(100, 100, 829, 502);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(new CardLayout());
+
+        // Create and set up the content pane.
+        App demo = new App();
+        demo.addComponentToPane(frame.getContentPane());
+
+        // Display the window.
+        frame.setVisible(true);
+    }
+
+    private void addComponentToPane(Container pane) {
+        mainGui = new MainGui();
+        starwarsGui = new StarWarsGui();
+        warhammerGui = new WarhammerGui();
+
+        mainGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                String selected = mainGui.getGameType();
+                switch (selected) {
+                    case "Star Wars":
+                        starwarsGui.setTeamName(mainGui.getTeamName());
+                        showPanel(STARWARS);
+                        break;
+                    case "Warhammer":
+                        warhammerGui.setTeamName(mainGui.getTeamName());
+                        showPanel(WARHAMMER);
+                        break;
+                }
+            }
+        });
+
+        starwarsGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+                if (starwarsGui.saveData() == false) {
+                } else {
+                    showPanel(MAIN);
+                }
+            }
+        });
+
+        warhammerGui.getFinishedAndExitBtn().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent a) {
+               if (warhammerGui.saveData() == false) {
+               } else {
+            	showPanel(MAIN);
+               }
+            }
+        });
+
+        pane.add(mainGui);
+        pane.add(starwarsGui);
+        pane.add(warhammerGui);
+    }
+
+    public void showPanel(int panel) {
+        mainGui.setVisible(false);
+        starwarsGui.setVisible(false);
+        warhammerGui.setVisible(false);
+
+        switch (panel) {
+            case MAIN:
+                mainGui.setVisible(true);
+                break;
+            case STARWARS:
+                starwarsGui.setVisible(true);
+                break;
+            case WARHAMMER:
+                warhammerGui.setVisible(true);
+                break;
+
+        }
+    }
+
+}
+
+/*the main prompt window, will include main I think
+
+ * things to do,
+ * 
+ * implement back button to return to this starting panel "frame"
+ * running point totals
+ * 
+ * */
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
+
+public class MainGui extends Panel {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -6294369280738346064L;
+	private JTextField tFTeamName;
+	private String teamName;
+	private JComboBox comboBox;
+
+	/**
+	 * Create the frame.
+	 */
+	public MainGui() {
+		setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(new BorderLayout(0, 0));
+
+		finishAndExitBtn.setText("Continue?");
+		add(finishAndExitBtn, BorderLayout.SOUTH);
+
+		JPanel panel = new JPanel();
+		add(panel, BorderLayout.CENTER);
+		panel.setLayout(new GridLayout(3, 2, 0, 0));
+
+		JLabel lbGameSelector = new JLabel("What game is this for?");
+		panel.add(lbGameSelector);
+
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] { "Star Wars", "Warhammer" }));
+		panel.add(comboBox);
+
+		JLabel lbTeamName = new JLabel("Team Name?");
+		panel.add(lbTeamName);
+
+		tFTeamName = new JTextField();
+		panel.add(tFTeamName);
+		tFTeamName.setColumns(10);
+
+//		JLabel lbFileBrowse = new JLabel("Select where to save");  //Cut content
+//		panel.add(lbFileBrowse);
+//
+//		JButton browseBtn = new JButton("Browse\r\n");			  //Cut content
+//		panel.add(browseBtn);
+	}
+
+	public String getTeamName() {
+		return tFTeamName.getText();
+	}
+
+	public String getGameType() {
+		String selected;
+		selected = (String) comboBox.getSelectedItem();
+		return selected;
+	}
+
+}
+import javax.swing.JPanel;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+
+public class Panel extends JPanel {
+
+  /**
+   *
+   */
+  private static final long serialVersionUID = 575239011360495251L;
+  protected JButton finishAndExitBtn = new JButton();
+  private String teamName;
+  protected ArrayList<Miniature> miniatures = new ArrayList<Miniature>();
+
+  public Panel() {
+  }
+
+  public JButton getFinishedAndExitBtn() {
+    return finishAndExitBtn;
+  }
+
+  public void writeToFile(String filename, ArrayList<Miniature> data) {
+    try {
+      PrintWriter pw = new PrintWriter(new FileOutputStream(filename));
+
+      for (Miniature d : data) {
+        pw.println(d);
+      }
+      pw.flush();
+      pw.close();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public boolean saveData() {
+    writeToFile(getFilename(), miniatures);
+    return true;
+  }
+
+  public void setTeamName(String teamName) {
+    this.teamName = teamName;
+  }
+
+  private String getFilename() {
+    return teamName + ".txt";
+  }
+}
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+public class StarWarsGui extends Panel {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5316683253061897552L;
+	private JTextArea tASpecialAbilities;
+	private JTextArea tAForcePowers;
+	private JTextArea tACommanderEffect;
+	private JTextField tFName;
+	private JTextField tfHitPts;
+	private JTextField tFDefense;
+	private JTextField tFAtk;
+	private JTextField tFDmg;
+	private JTextField tFCost;
+
+	// Some methods
+
+	public void clearStarWars() {
+		tASpecialAbilities.setText("");
+		tAForcePowers.setText("");
+
+		tACommanderEffect.setText("");
+		tFName.setText("");
+		tfHitPts.setText("");
+		tFDefense.setText("");
+		tFAtk.setText("");
+		tFDmg.setText("");
+		tFCost.setText("");
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public StarWarsGui() {
+
+		setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(null);
+
+		JPanel TextPanel = new JPanel();
+		TextPanel.setBounds(273, 93, 355, 340);
+		add(TextPanel);
+		TextPanel.setLayout(new GridLayout(3, 1, 0, 0));
+
+		JPanel SpecialAbilitiesPanel = new JPanel();
+		SpecialAbilitiesPanel.setBorder(
+				new TitledBorder(null, "Special Abilities", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(SpecialAbilitiesPanel);
+		SpecialAbilitiesPanel.setLayout(new BorderLayout(0, 0));
+
+		tASpecialAbilities = new JTextArea();
+		SpecialAbilitiesPanel.add(tASpecialAbilities, BorderLayout.CENTER);
+
+		JPanel ForcePowersPanel = new JPanel();
+		ForcePowersPanel
+				.setBorder(new TitledBorder(null, "Force Powers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(ForcePowersPanel);
+		ForcePowersPanel.setLayout(new BorderLayout(0, 0));
+
+		tAForcePowers = new JTextArea();
+		ForcePowersPanel.add(tAForcePowers, BorderLayout.CENTER);
+
+		JPanel CommanderEffectPanel = new JPanel();
+		CommanderEffectPanel.setBorder(
+				new TitledBorder(null, "Commander Effect", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(CommanderEffectPanel);
+		CommanderEffectPanel.setLayout(new BorderLayout(0, 0));
+
+		tACommanderEffect = new JTextArea();
+		CommanderEffectPanel.add(tACommanderEffect, BorderLayout.CENTER);
+
+		JLabel lbName = new JLabel("Name");
+		lbName.setBounds(41, 32, 45, 20);
+		add(lbName);
+
+		JLabel lbHitPts = new JLabel("Hit Points");
+		lbHitPts.setBounds(41, 92, 55, 20);
+		add(lbHitPts);
+
+		JLabel lbDefense = new JLabel("Defense");
+		lbDefense.setBounds(41, 142, 55, 20);
+		add(lbDefense);
+
+		JLabel lbAtk = new JLabel("Attack");
+		lbAtk.setBounds(41, 192, 55, 20);
+		add(lbAtk);
+
+		JLabel lbDmg = new JLabel("Damage");
+		lbDmg.setBounds(41, 242, 55, 20);
+		add(lbDmg);
+
+		JLabel lbCost = new JLabel("Point Cost");
+		lbCost.setBounds(396, 32, 74, 20);
+		add(lbCost);
+
+		tFName = new JTextField();
+		tFName.setBounds(115, 33, 196, 20);
+		add(tFName);
+		tFName.setColumns(10);
+
+		tfHitPts = new JTextField();
+		tfHitPts.setBounds(115, 92, 25, 20);
+		add(tfHitPts);
+		tfHitPts.setColumns(10);
+
+		tFDefense = new JTextField();
+		tFDefense.setBounds(115, 142, 25, 20);
+		add(tFDefense);
+		tFDefense.setColumns(10);
+
+		tFAtk = new JTextField();
+		tFAtk.setBounds(115, 192, 25, 20);
+		add(tFAtk);
+		tFAtk.setColumns(10);
+
+		tFDmg = new JTextField();
+		tFDmg.setBounds(115, 242, 25, 20);
+		add(tFDmg);
+		tFDmg.setColumns(10);
+
+		tFCost = new JTextField();
+		tFCost.setBounds(480, 33, 25, 20);
+		add(tFCost);
+		tFCost.setColumns(10);
+
+		JButton starWarsAddBtn = new JButton("Add to team"); // adds to object array
+		starWarsAddBtn.setBounds(65, 324, 102, 21);
+		add(starWarsAddBtn);
+		starWarsAddBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				getData();
+			}
+		});
+
+		finishAndExitBtn.setText("Save and Exit"); // adds to object array
+		finishAndExitBtn.setBounds(65, 412, 102, 21);
+		add(finishAndExitBtn);
+
+		JButton clearBtn = new JButton("Clear");
+		clearBtn.setBounds(65, 366, 102, 21);
+		add(clearBtn);
+		clearBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				clearStarWars();
+			}
+		});
+	}
+
+	private Miniature getData() {
+		String name = tFName.getText();
+		String specialAbilities = tASpecialAbilities.getText();
+		String forcePowers = tAForcePowers.getText();
+		String commanderEffect = tACommanderEffect.getText();
+		int hitPts = Integer.parseInt(tfHitPts.getText());
+		int defense = Integer.parseInt(tFDefense.getText());
+		int atk = Integer.parseInt(tFAtk.getText());
+		int dmg = Integer.parseInt(tFDmg.getText());
+		int cost = Integer.parseInt(tFCost.getText());
+
+		StarWars mini = new StarWars(name, cost, hitPts, defense, atk, dmg, specialAbilities, forcePowers,
+				commanderEffect);
+		miniatures.add(mini);
+		// System.out.println(mini);
+
+		return mini;
+	}
+
+}
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.border.TitledBorder;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+
+public class WarhammerGui extends Panel {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 2030011407491667716L;
+	private JTextField tFName;
+	private JTextField tFBS;
+	private JTextField tFWS;
+	private JTextField tFS;
+	private JTextField tFT;
+	private JTextField tFW;
+	private JTextField tFA;
+	private JTextField tFLD;
+	private JTextField tFSV;
+	private JTextField tFMax;
+	private JTextArea tAWargear;
+	private JTextArea tAAbilities;
+	private JTextArea tASpecialist;
+	private JTextArea tAPerks;
+	private JTextField tFPointCost;
+
+	// Some Methods
+	public void clearWarhammer() {
+		tFName.setText("");
+		tFBS.setText("");
+		tFWS.setText("");
+		tFS.setText("");
+		tFT.setText("");
+		tFW.setText("");
+		tFA.setText("");
+		tFLD.setText("");
+		tFSV.setText("");
+		tFMax.setText("");
+		tAWargear.setText("");
+		tAAbilities.setText("");
+		tASpecialist.setText("");
+		tAPerks.setText("");
+		tFPointCost.setText("");
+	}
+	private Miniature getData() {
+		String name = tFName.getText();
+		String abilities = tAAbilities.getText();
+		String specialists = tASpecialist.getText();
+		String perks = tAPerks.getText();
+		String wargear = tAWargear.getText();
+		int cost = Integer.parseInt(tFPointCost.getText());
+		int movement = Integer.parseInt(tFMax.getText()); //max is actuall = move ;
+		int weaponSkill = Integer.parseInt(tFWS.getText());
+		int ballisticSkill = Integer.parseInt(tFBS.getText());
+		int strength = Integer.parseInt(tFS.getText());
+		int toughness = Integer.parseInt(tFT.getText());
+		int wounds = Integer.parseInt(tFW.getText());
+		int attacks = Integer.parseInt(tFA.getText()); ;
+		int leadership = Integer.parseInt(tFLD.getText());;
+		int save = Integer.parseInt(tFSV.getText());;
+		
+		
+		Warhammer mini = new Warhammer(name, cost, movement, weaponSkill, ballisticSkill, strength, toughness, wounds, attacks,
+				leadership, save, wargear, abilities, specialists, perks);
+		miniatures.add(mini);
+	
+		return mini;
+		
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public WarhammerGui() {
+		setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(new BorderLayout(0, 0));
+
+		JPanel statsPanel = new JPanel();
+		add(statsPanel, BorderLayout.NORTH);
+		statsPanel.setLayout(new GridLayout(0, 10, 0, 0));
+
+		JLabel lbName = new JLabel("Name");
+		lbName.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbName);
+
+		JLabel lbWS = new JLabel("WS");
+		lbWS.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbWS);
+
+		JLabel lbBS = new JLabel("BS");
+		lbBS.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbBS);
+
+		JLabel lbS = new JLabel("S");
+		lbS.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbS);
+
+		JLabel lbT = new JLabel("T");
+		lbT.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbT);
+
+		JLabel lbW = new JLabel("W");
+		lbW.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbW);
+
+		JLabel lbA = new JLabel("A");
+		lbA.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbA);
+
+		JLabel lbLd = new JLabel("Ld");
+		lbLd.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbLd);
+
+		JLabel lbSv = new JLabel("Sv");
+		lbSv.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbSv);
+
+		JLabel lbMax = new JLabel("Move");
+		lbMax.setHorizontalAlignment(SwingConstants.CENTER);
+		statsPanel.add(lbMax);
+
+		tFName = new JTextField();
+		statsPanel.add(tFName);
+		tFName.setColumns(10);
+
+		tFWS = new JTextField();
+		statsPanel.add(tFWS);
+		tFWS.setColumns(10);
+
+		tFBS = new JTextField();
+		statsPanel.add(tFBS);
+		tFBS.setColumns(10);
+
+		tFS = new JTextField();
+		statsPanel.add(tFS);
+		tFS.setColumns(10);
+
+		tFT = new JTextField();
+		statsPanel.add(tFT);
+		tFT.setColumns(10);
+
+		tFW = new JTextField();
+		statsPanel.add(tFW);
+		tFW.setColumns(10);
+
+		tFA = new JTextField();
+		statsPanel.add(tFA);
+		tFA.setColumns(10);
+
+		tFLD = new JTextField();
+		statsPanel.add(tFLD);
+		tFLD.setColumns(10);
+
+		tFSV = new JTextField();
+		statsPanel.add(tFSV);
+		tFSV.setColumns(10);
+
+		tFMax = new JTextField();
+		statsPanel.add(tFMax);
+		tFMax.setColumns(10);
+
+		JPanel stringAndButtons = new JPanel();
+		add(stringAndButtons, BorderLayout.CENTER);
+		stringAndButtons.setLayout(null);
+
+		JPanel stringPanel = new JPanel();
+		stringPanel.setBounds(253, 22, 357, 312);
+		stringAndButtons.add(stringPanel);
+		stringPanel.setLayout(new BorderLayout(0, 0));
+
+		JPanel panel_1 = new JPanel();
+		stringPanel.add(panel_1, BorderLayout.SOUTH);
+		panel_1.setLayout(new GridLayout(2, 1, 0, 0));
+
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Specialist", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.add(panel);
+		panel.setLayout(new BorderLayout(0, 0));
+
+		tASpecialist = new JTextArea();
+		panel.add(tASpecialist);
+
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "Perks", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.add(panel_2);
+		panel_2.setLayout(new BorderLayout(0, 0));
+
+		tAPerks = new JTextArea();
+		panel_2.add(tAPerks);
+
+		JPanel panel_3 = new JPanel();
+		stringPanel.add(panel_3, BorderLayout.CENTER);
+		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
+
+		JPanel panel_4 = new JPanel();
+		panel_4.setBorder(new TitledBorder(null, "Wargear", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_3.add(panel_4);
+		panel_4.setLayout(new BorderLayout(0, 0));
+
+		tAWargear = new JTextArea();
+		panel_4.add(tAWargear, BorderLayout.CENTER);
+
+		JPanel panel_5 = new JPanel();
+		panel_5.setBorder(new TitledBorder(null, "Abilities", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_3.add(panel_5);
+		panel_5.setLayout(new BorderLayout(0, 0));
+
+		tAAbilities = new JTextArea();
+		panel_5.add(tAAbilities, BorderLayout.CENTER);
+
+		JLabel lbPointCost = new JLabel("Point Cost");
+		lbPointCost.setBounds(95, 55, 67, 19);
+		stringAndButtons.add(lbPointCost);
+
+		tFPointCost = new JTextField();
+		tFPointCost.setBounds(163, 55, 45, 19);
+		stringAndButtons.add(tFPointCost);
+		tFPointCost.setColumns(10);
+
+		// Buttons
+
+		JButton addBtn = new JButton("Add To Team");
+		addBtn.setBounds(10, 157, 120, 21);
+		stringAndButtons.add(addBtn);
+		addBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				getData();
+			}
+		});
+		
+		finishAndExitBtn.setBounds(7, 236, 123, 21);
+		finishAndExitBtn.setText("Save team and Exit");
+		stringAndButtons.add(finishAndExitBtn);
+	
+		JButton clearBtn = new JButton("Clear");
+		clearBtn.setBounds(10, 188, 120, 21);
+		stringAndButtons.add(clearBtn);
+		clearBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				clearWarhammer();
+			}
+		});
+		
+		
+		JLabel lbCurrentTotal = new JLabel("Current Total");
+		lbCurrentTotal.setBounds(152, 161, 67, 17);
+		stringAndButtons.add(lbCurrentTotal);
+
+		JTextField tFCurrentTotal = new JTextField();
+		tFCurrentTotal.setBounds(140, 190, 96, 19);
+		stringAndButtons.add(tFCurrentTotal);
+		tFCurrentTotal.setColumns(10);
+
+
+	}
+
+}
+public class Miniature {
+
+	private String name;
+	private int pointCost;
+
+	public Miniature(String name, int pointCost) {
+		this.name = name;
+		this.pointCost = pointCost;
+
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setPointCost(int pointCost) {
+		this.pointCost = pointCost;
+	}
+
+	public int getPointCost() {
+		return pointCost;
+	}
+
+}
+/*star wars miniature template
+ * To do:
+ * better toString
+ * 
+ * */
+
+public class StarWars extends Miniature {
+	private int hP, def, atk, dmg, force;
+	private String abilities, forceAbilities, commanderEffect;
+
+	public StarWars(String name, int pointCost, int hP, int def, int atk, int dmg, String abilities,
+			String forceAbilities, String commanderEffect) {
+		super(name, pointCost);
+		this.hP = hP;
+		this.def = def;
+		this.atk = atk;
+		this.dmg = dmg;
+
+		this.abilities = abilities;
+		this.forceAbilities = forceAbilities;
+		this.commanderEffect = commanderEffect;
+	}
+
+	public void sethP(int hP) {
+		this.hP = hP;
+	}
+
+	public int gethP() {
+		return hP;
+	}
+
+	public void setDef(int def) {
+		this.def = def;
+	}
+
+	public int getDef() {
+		return def;
+	}
+
+	public void setAtk(int atk) {
+		this.atk = atk;
+	}
+
+	public int getAtk() {
+		return atk;
+	}
+
+	public void setDmg(int dmg) {
+		this.dmg = dmg;
+	}
+
+	public int getDmg() {
+		return dmg;
+	}
+
+	public void setForce(int force) {
+		this.force = force;
+	}
+
+	public int getForce() {
+		return force;
+	}
+
+	public void setAbilities(String abilities) {
+		this.abilities = abilities;
+	}
+
+	public String getAbilities() {
+		return abilities;
+	}
+
+	public void setCommanderEffect(String commanderEffect) {
+		this.commanderEffect = commanderEffect;
+	}
+
+	public String getCommanderrEffect() {
+		return commanderEffect;
+	}
+
+	@Override
+	public String toString() {
+		return "Model: " + getName() + "\n" + "Point Cost: " + getPointCost() + "\n" + "Hit Points: " + hP + "\n"
+				+ "Defense: " + def + "\n" + "Attack:" + atk + "\n" + "Damage:" + dmg + "\n" + "Special Abilities: "
+				+ abilities + "\n" + "Force Powers: " + forceAbilities + "\n" + "Commander Effects: " + commanderEffect
+				+ "\n";
+	}
+}
+
+public class Warhammer extends Miniature {
+	int movement, weaponSkill, ballisticSkill, strength, toughenss, wounds, attacks, leaderShip, save;
+	String wargear, abilities, specialist, perks;
+
+	// constructor
+	public Warhammer(String name, int pointCost, int movement, int weaponSkill, int ballisticSkill, int strength,
+			int toughenss, int wounds, int attacks, int leaderShip, int save, String wargear, String abilities,
+			String specialst, String perks) {
+		super(name, pointCost);
+		this.movement = movement;
+		this.weaponSkill = weaponSkill;
+		this.ballisticSkill = ballisticSkill;
+		this.strength = strength;
+		this.toughenss = toughenss;
+		this.wounds = wounds;
+		this.attacks = attacks;
+		this.leaderShip = leaderShip;
+		this.save = save;
+		this.wargear = wargear;
+		this.abilities = abilities;
+		this.specialist = specialst;
+		this.perks = perks;
+	}
+
+	// mutators and accessors
+	public void setMovement(int movement) {
+		this.movement = movement;
+	}
+
+	public int getMovement() {
+		return movement;
+	}
+
+	public void setWeaponSkill(int weaponSkill) {
+		this.weaponSkill = weaponSkill;
+	}
+
+	public int getWeaponSkill() {
+		return weaponSkill;
+	}
+
+	public void setBallisticSkill(int ballisticSkill) {
+		this.ballisticSkill = ballisticSkill;
+	}
+
+	public int getBallisticSkill() {
+		return ballisticSkill;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setToughenss(int toughenss) {
+		this.toughenss = toughenss;
+	}
+
+	public int getToughenss() {
+		return toughenss;
+	}
+
+	public void setWounds(int wounds) {
+		this.wounds = wounds;
+	}
+
+	public int getWounds() {
+		return wounds;
+	}
+
+	public void setAttacks(int attacks) {
+		this.attacks = attacks;
+	}
+
+	public int getAttacks() {
+		return attacks;
+	}
+
+	public void setLeaderShip(int leaderShip) {
+		this.leaderShip = leaderShip;
+	}
+
+	public int getLeaderShip() {
+		return leaderShip;
+	}
+
+	public void setSave(int save) {
+		this.save = save;
+	}
+
+	public int getSave() {
+		return save;
+	}
+
+	public void setWargear(String wargear) {
+		this.wargear = wargear;
+	}
+
+	public String getWargear() {
+		return wargear;
+	}
+
+	public void setAbilities(String abilities) {
+		this.abilities = abilities;
+	}
+
+	public String getAbilities() {
+		return abilities;
+	}
+
+	public void setSpecialist(String specialist) {
+		this.specialist = specialist;
+	}
+
+	public String getSpecialst() {
+		return specialist;
+	}
+
+	public void setPerks(String perks) {
+		this.perks = perks;
+	}
+
+	public String getPerks() {
+		return perks;
+	}
+
+	// toString setup here.
+	@Override
+	public String toString() {
+		return "              " +"M\t" + "WS\t" + "BS\t" + "S\t" + "T\t" + "W\t" + "A\t" +"Ld\t" + "Sv \n" +
+				"Model Name:\t" + getName() +"\t" + movement+"\t"+ weaponSkill + "\t" +  ballisticSkill + "\t" +  
+				strength + "\t" +  toughenss + "\t" +  wounds + "\t" +  attacks + "\t" + leaderShip + "\t" +  
+				save + "\t\n" + "Wargear: " + wargear + "\nAbilities: " + abilities
+				+ "\nSpeciliast: " + specialist + "\nPerks: " + perks + "\nUnit cost: " + getPointCost();
+	}
+
+}

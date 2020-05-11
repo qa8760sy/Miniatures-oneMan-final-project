@@ -1,0 +1,141 @@
+
+public class Warhammer extends Miniature {
+	int movement, weaponSkill, ballisticSkill, strength, toughenss, wounds, attacks, leaderShip, save;
+	String wargear, abilities, specialist, perks;
+
+	// constructor
+	public Warhammer(String name, int pointCost, int movement, int weaponSkill, int ballisticSkill, int strength,
+			int toughenss, int wounds, int attacks, int leaderShip, int save, String wargear, String abilities,
+			String specialst, String perks) {
+		super(name, pointCost);
+		this.movement = movement;
+		this.weaponSkill = weaponSkill;
+		this.ballisticSkill = ballisticSkill;
+		this.strength = strength;
+		this.toughenss = toughenss;
+		this.wounds = wounds;
+		this.attacks = attacks;
+		this.leaderShip = leaderShip;
+		this.save = save;
+		this.wargear = wargear;
+		this.abilities = abilities;
+		this.specialist = specialst;
+		this.perks = perks;
+	}
+
+	// mutators and accessors
+	public void setMovement(int movement) {
+		this.movement = movement;
+	}
+
+	public int getMovement() {
+		return movement;
+	}
+
+	public void setWeaponSkill(int weaponSkill) {
+		this.weaponSkill = weaponSkill;
+	}
+
+	public int getWeaponSkill() {
+		return weaponSkill;
+	}
+
+	public void setBallisticSkill(int ballisticSkill) {
+		this.ballisticSkill = ballisticSkill;
+	}
+
+	public int getBallisticSkill() {
+		return ballisticSkill;
+	}
+
+	public void setStrength(int strength) {
+		this.strength = strength;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
+
+	public void setToughenss(int toughenss) {
+		this.toughenss = toughenss;
+	}
+
+	public int getToughenss() {
+		return toughenss;
+	}
+
+	public void setWounds(int wounds) {
+		this.wounds = wounds;
+	}
+
+	public int getWounds() {
+		return wounds;
+	}
+
+	public void setAttacks(int attacks) {
+		this.attacks = attacks;
+	}
+
+	public int getAttacks() {
+		return attacks;
+	}
+
+	public void setLeaderShip(int leaderShip) {
+		this.leaderShip = leaderShip;
+	}
+
+	public int getLeaderShip() {
+		return leaderShip;
+	}
+
+	public void setSave(int save) {
+		this.save = save;
+	}
+
+	public int getSave() {
+		return save;
+	}
+
+	public void setWargear(String wargear) {
+		this.wargear = wargear;
+	}
+
+	public String getWargear() {
+		return wargear;
+	}
+
+	public void setAbilities(String abilities) {
+		this.abilities = abilities;
+	}
+
+	public String getAbilities() {
+		return abilities;
+	}
+
+	public void setSpecialist(String specialist) {
+		this.specialist = specialist;
+	}
+
+	public String getSpecialst() {
+		return specialist;
+	}
+
+	public void setPerks(String perks) {
+		this.perks = perks;
+	}
+
+	public String getPerks() {
+		return perks;
+	}
+
+	// toString setup here.
+	@Override
+	public String toString() {
+		return "              " +"M\t" + "WS\t" + "BS\t" + "S\t" + "T\t" + "W\t" + "A\t" +"Ld\t" + "Sv \n" +
+				"Model Name:\t" + getName() +"\t" + movement+"\t"+ weaponSkill + "\t" +  ballisticSkill + "\t" +  
+				strength + "\t" +  toughenss + "\t" +  wounds + "\t" +  attacks + "\t" + leaderShip + "\t" +  
+				save + "\t\n" + "Wargear: " + wargear + "\nAbilities: " + abilities
+				+ "\nSpeciliast: " + specialist + "\nPerks: " + perks + "\nUnit cost: " + getPointCost();
+	}
+
+}

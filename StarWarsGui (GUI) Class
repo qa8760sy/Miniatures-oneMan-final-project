@@ -1,0 +1,182 @@
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
+import javax.swing.border.TitledBorder;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+public class StarWarsGui extends Panel {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5316683253061897552L;
+	private JTextArea tASpecialAbilities;
+	private JTextArea tAForcePowers;
+	private JTextArea tACommanderEffect;
+	private JTextField tFName;
+	private JTextField tfHitPts;
+	private JTextField tFDefense;
+	private JTextField tFAtk;
+	private JTextField tFDmg;
+	private JTextField tFCost;
+
+	// Some methods
+
+	public void clearStarWars() {
+		tASpecialAbilities.setText("");
+		tAForcePowers.setText("");
+
+		tACommanderEffect.setText("");
+		tFName.setText("");
+		tfHitPts.setText("");
+		tFDefense.setText("");
+		tFAtk.setText("");
+		tFDmg.setText("");
+		tFCost.setText("");
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public StarWarsGui() {
+
+		setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(null);
+
+		JPanel TextPanel = new JPanel();
+		TextPanel.setBounds(273, 93, 355, 340);
+		add(TextPanel);
+		TextPanel.setLayout(new GridLayout(3, 1, 0, 0));
+
+		JPanel SpecialAbilitiesPanel = new JPanel();
+		SpecialAbilitiesPanel.setBorder(
+				new TitledBorder(null, "Special Abilities", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(SpecialAbilitiesPanel);
+		SpecialAbilitiesPanel.setLayout(new BorderLayout(0, 0));
+
+		tASpecialAbilities = new JTextArea();
+		SpecialAbilitiesPanel.add(tASpecialAbilities, BorderLayout.CENTER);
+
+		JPanel ForcePowersPanel = new JPanel();
+		ForcePowersPanel
+				.setBorder(new TitledBorder(null, "Force Powers", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(ForcePowersPanel);
+		ForcePowersPanel.setLayout(new BorderLayout(0, 0));
+
+		tAForcePowers = new JTextArea();
+		ForcePowersPanel.add(tAForcePowers, BorderLayout.CENTER);
+
+		JPanel CommanderEffectPanel = new JPanel();
+		CommanderEffectPanel.setBorder(
+				new TitledBorder(null, "Commander Effect", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		TextPanel.add(CommanderEffectPanel);
+		CommanderEffectPanel.setLayout(new BorderLayout(0, 0));
+
+		tACommanderEffect = new JTextArea();
+		CommanderEffectPanel.add(tACommanderEffect, BorderLayout.CENTER);
+
+		JLabel lbName = new JLabel("Name");
+		lbName.setBounds(41, 32, 45, 20);
+		add(lbName);
+
+		JLabel lbHitPts = new JLabel("Hit Points");
+		lbHitPts.setBounds(41, 92, 55, 20);
+		add(lbHitPts);
+
+		JLabel lbDefense = new JLabel("Defense");
+		lbDefense.setBounds(41, 142, 55, 20);
+		add(lbDefense);
+
+		JLabel lbAtk = new JLabel("Attack");
+		lbAtk.setBounds(41, 192, 55, 20);
+		add(lbAtk);
+
+		JLabel lbDmg = new JLabel("Damage");
+		lbDmg.setBounds(41, 242, 55, 20);
+		add(lbDmg);
+
+		JLabel lbCost = new JLabel("Point Cost");
+		lbCost.setBounds(396, 32, 74, 20);
+		add(lbCost);
+
+		tFName = new JTextField();
+		tFName.setBounds(115, 33, 196, 20);
+		add(tFName);
+		tFName.setColumns(10);
+
+		tfHitPts = new JTextField();
+		tfHitPts.setBounds(115, 92, 25, 20);
+		add(tfHitPts);
+		tfHitPts.setColumns(10);
+
+		tFDefense = new JTextField();
+		tFDefense.setBounds(115, 142, 25, 20);
+		add(tFDefense);
+		tFDefense.setColumns(10);
+
+		tFAtk = new JTextField();
+		tFAtk.setBounds(115, 192, 25, 20);
+		add(tFAtk);
+		tFAtk.setColumns(10);
+
+		tFDmg = new JTextField();
+		tFDmg.setBounds(115, 242, 25, 20);
+		add(tFDmg);
+		tFDmg.setColumns(10);
+
+		tFCost = new JTextField();
+		tFCost.setBounds(480, 33, 25, 20);
+		add(tFCost);
+		tFCost.setColumns(10);
+
+		JButton starWarsAddBtn = new JButton("Add to team"); // adds to object array
+		starWarsAddBtn.setBounds(65, 324, 102, 21);
+		add(starWarsAddBtn);
+		starWarsAddBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				getData();
+			}
+		});
+
+		finishAndExitBtn.setText("Save and Exit"); // adds to object array
+		finishAndExitBtn.setBounds(65, 412, 102, 21);
+		add(finishAndExitBtn);
+
+		JButton clearBtn = new JButton("Clear");
+		clearBtn.setBounds(65, 366, 102, 21);
+		add(clearBtn);
+		clearBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent a) {
+				clearStarWars();
+			}
+		});
+	}
+
+	private Miniature getData() {
+		String name = tFName.getText();
+		String specialAbilities = tASpecialAbilities.getText();
+		String forcePowers = tAForcePowers.getText();
+		String commanderEffect = tACommanderEffect.getText();
+		int hitPts = Integer.parseInt(tfHitPts.getText());
+		int defense = Integer.parseInt(tFDefense.getText());
+		int atk = Integer.parseInt(tFAtk.getText());
+		int dmg = Integer.parseInt(tFDmg.getText());
+		int cost = Integer.parseInt(tFCost.getText());
+
+		StarWars mini = new StarWars(name, cost, hitPts, defense, atk, dmg, specialAbilities, forcePowers,
+				commanderEffect);
+		miniatures.add(mini);
+		// System.out.println(mini);
+
+		return mini;
+	}
+
+}
